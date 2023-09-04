@@ -2,10 +2,10 @@ FROM python:3.9
 
 WORKDIR /app
 
-ENV ENV_REDIS_HOST=localhost \
-    ENV_REDIS_PORT=6379 \
-    ENV_REDIS_DB=0 \
-    ENV_REDIS_PASSWORD=1234
+ENV REDIS_HOST=localhost \
+    REDIS_PORT=6379 \
+    REDIS_DB=0 \
+    REDIS_PASSWORD=1234
 
 COPY . /app
 
