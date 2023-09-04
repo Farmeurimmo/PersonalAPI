@@ -25,19 +25,19 @@ def get_redis_connection():
     return redis_connection
 
 
-redis_host = os.getenv('REDIS_HOST')
+redis_host = os.environ.get('REDIS_HOST')
 if redis_host is None:
     raise Exception("REDIS_HOST is not defined")
 
-redis_port = os.getenv('REDIS_PORT')
+redis_port = os.environ.get('REDIS_PORT')
 if redis_port is None:
     raise Exception("REDIS_PORT is not defined")
 
-redis_password = os.getenv('REDIS_PASSWORD')
+redis_password = os.environ.get('REDIS_PASSWORD')
 if redis_password is None:
     raise Exception("REDIS_PASSWORD is not defined")
 
-redis_db = os.getenv('REDIS_DB')
+redis_db = os.environ.get('REDIS_DB')
 if redis_db is None:
     raise Exception("REDIS_DB is not defined")
 
