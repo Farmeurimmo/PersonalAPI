@@ -1,8 +1,17 @@
 from fastapi import FastAPI
+import time
 
 from RedisManager import *
 
 app = FastAPI()
+
+while True:
+    try:
+        get_value("article.test")
+        break
+    except:
+        print("Waiting for redis to start")
+        time.sleep(1)
 
 
 @app.get("/")
