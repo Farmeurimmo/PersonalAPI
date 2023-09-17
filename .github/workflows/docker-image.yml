@@ -1,4 +1,4 @@
-name: ci
+name: build docker image
 
 on:
   push:
@@ -21,6 +21,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+          logout: true
       -
         name: Build and push
         uses: docker/build-push-action@v5
