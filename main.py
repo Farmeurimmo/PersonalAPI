@@ -19,10 +19,26 @@ async def root():
     return {"message": "Connection is healthy"}
 
 
+@app.get("/mc/user/{uuid}")
+async def getUser(uuid: str):
+    return get_value("mc.user." + uuid)
+
+
+@app.post("/mc/user/{uuid}")
+async def updateUser(uuid: str, username: str):
+    set_value("mc.user." + uuid, username)
+    return {"message": "ok"}
+
+
+@app.get("/mc/users")
+async def getUsers():
+    return get_all_data("mc.user.")
+
+
 @app.get("/portfolio/article/{name}")
 async def getView(name: str):
     value = get_value("article." + name)
-    return {"message": value}
+    return value if value is not None else 0
 
 
 @app.post("/portfolio/article/{name}")
