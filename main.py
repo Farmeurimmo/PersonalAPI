@@ -1,7 +1,6 @@
 import time
 
 from fastapi import FastAPI
-from pydantic import BaseModel
 
 from RedisManager import *
 
@@ -16,10 +15,6 @@ while True:
         time.sleep(1)
 
 
-class UserUpdate(BaseModel):
-    content: dict
-
-
 @app.get("/")
 async def root():
     return {"message": "Connection is healthy"}
@@ -31,9 +26,10 @@ async def getUser(uuid: str):
 
 
 @app.post("/mc/user/{uuid}")
-async def updateUser(uuid: str, user_update: UserUpdate):
-    set_value("mc.user." + uuid, user_update.content)
+async def updateUser(uuid: str, body: dict):
+    set_value("mc.user." + uuid, body)
     return {"message": "ok"}
+
 
 
 @app.get("/mc/users")
