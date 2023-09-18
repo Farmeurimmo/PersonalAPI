@@ -27,7 +27,11 @@ async def getUser(uuid: str):
 
 @app.post("/mc/user/{uuid}")
 async def updateUser(uuid: str, body: dict):
-    set_value("mc.user." + uuid, body)
+    print(uuid, body)
+    try:
+        set_value("mc.user." + uuid, body)
+    except Exception as e:
+        return {"message": "error", "error": str(e)}
     return {"message": "ok"}
 
 
