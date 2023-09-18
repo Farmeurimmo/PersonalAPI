@@ -62,11 +62,12 @@ def get_value(key):
 
 
 def set_value(key, value):
-    return get_redis_connection().set(key, value)
+    print(f"Setting {key} to {value}")
+    get_redis_connection().set(key, value)
 
 
 def increment_value(key):
-    return get_redis_connection().incr(key)
+    get_redis_connection().incr(key)
 
 
 def get_all_data(filter):
