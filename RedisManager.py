@@ -2,13 +2,18 @@ import os
 
 import redis
 
+redis_host = None
+redis_port = None
+redis_password = None
+redis_db = None
+
 
 def connect_to_redis(host, port, password=None, db=0):
-    r = redis.Redis(host=host, port=port, password=password, db=db)
-    return r
+    return redis.Redis(host=host, port=port, password=password, db=db)
 
 
 def init_redis():
+    update_credentials()
     global redis_connection
     try:
         redis_connection = connect_to_redis(redis_host, redis_port, redis_password, redis_db)
@@ -25,21 +30,23 @@ def get_redis_connection():
     return redis_connection
 
 
-redis_host = os.environ.get('REDIS_HOST')
-if redis_host is None:
-    raise Exception("REDIS_HOST is not defined")
+def update_credentials():
+    global redis_host, redis_port, redis_password, redis_db
+    redis_host = os.environ.get('REDIS_HOST')
+    if redis_host is None:
+        raise Exception("REDIS_HOST is not defined")
 
-redis_port = os.environ.get('REDIS_PORT')
-if redis_port is None:
-    raise Exception("REDIS_PORT is not defined")
+    redis_port = os.environ.get('REDIS_PORT')
+    if redis_port is None:
+        raise Exception("REDIS_PORT is not defined")
 
-redis_password = os.environ.get('REDIS_PASSWORD')
-if redis_password is None:
-    raise Exception("REDIS_PASSWORD is not defined")
+    redis_password = os.environ.get('REDIS_PASSWORD')
+    if redis_password is None:
+        raise Exception("REDIS_PASSWORD is not defined")
 
-redis_db = os.environ.get('REDIS_DB')
-if redis_db is None:
-    raise Exception("REDIS_DB is not defined")
+    redis_db = os.environ.get('REDIS_DB')
+    if redis_db is None:
+        raise Exception("REDIS_DB is not defined")
 
 
 redis_connection = None

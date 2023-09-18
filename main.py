@@ -1,5 +1,6 @@
-from fastapi import FastAPI
 import time
+
+from fastapi import FastAPI
 
 from RedisManager import *
 
@@ -25,8 +26,8 @@ async def getUser(uuid: str):
 
 
 @app.post("/mc/user/{uuid}")
-async def updateUser(uuid: str, username: str):
-    set_value("mc.user." + uuid, username)
+async def updateUser(uuid: str, content: str):
+    set_value("mc.user." + uuid, content)
     return {"message": "ok"}
 
 
