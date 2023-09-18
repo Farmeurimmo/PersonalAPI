@@ -22,12 +22,14 @@ async def root():
 
 @app.get("/mc/user/{uuid}")
 async def getUser(uuid: str):
-    return get_value("mc.user." + uuid)
+    try:
+        return get_value("mc.user." + uuid)
+    except Exception as e:
+        return {"message": "error", "error": str(e)}
 
 
 @app.post("/mc/user/{uuid}")
 async def updateUser(uuid: str, body: dict):
-    print(uuid, body)
     try:
         set_value("mc.user." + uuid, body)
     except Exception as e:
@@ -35,10 +37,12 @@ async def updateUser(uuid: str, body: dict):
     return {"message": "ok"}
 
 
-
 @app.get("/mc/users")
 async def getUsers():
-    return get_all_data("mc.user.")
+    try:
+        return get_all_data("mc.user.")
+    except Exception as e:
+        return {"message": "error", "error": str(e)}
 
 
 @app.get("/portfolio/article/{name}")
@@ -49,10 +53,16 @@ async def getView(name: str):
 
 @app.post("/portfolio/article/{name}")
 async def incrementView(name: str):
-    increment_value("article." + name)
+    try:
+        increment_value("article." + name)
+    except Exception as e:
+        return {"message": "error", "error": str(e)}
     return {"message": "ok"}
 
 
 @app.get("/portfolio/articles")
 async def getArticles():
-    return get_all_data("article.")
+    try:
+        return get_all_data("article.")
+    except Exception as e:
+        return {"message": "error", "error": str(e)}
