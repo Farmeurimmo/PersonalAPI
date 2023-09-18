@@ -1,10 +1,30 @@
 import time
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 from RedisManager import *
 
 app = FastAPI()
+
+auth_key = os.environ.get('AUTH_KEY')
+
+
+class AuthMiddleware:
+    def __init__(self, api_key: str):
+        self.api_key = api_key
+
+    async def __call__(self, request: Request, call_next):
+        if request.method != "GET":
+            provided_key = request.headers.get("X-API-Key")
+
+            if not provided_key or provided_key != self.api_key:
+                error_message = "Invalid API key"
+                return JSONResponse(status_code=401, content={"error": error_message})
+
+        response = await call_next(request)
+        return response
+
 
 while True:
     try:
@@ -66,3 +86,10 @@ async def getArticles():
         return get_all_data("article.")
     except Exception as e:
         return {"message": "error", "error": str(e)}
+
+
+# Initialize the AuthMiddleware with the API key
+auth_middleware = AuthMiddleware(auth_key)
+
+# Add the AuthMiddleware to the application
+app.middleware("http")(auth_middleware)
