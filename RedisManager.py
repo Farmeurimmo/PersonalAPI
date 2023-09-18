@@ -63,7 +63,10 @@ def get_value(key):
 
 def set_value(key, value):
     print(f"Setting {key} to {value}")
-    get_redis_connection().set(key, value)
+    try:
+        get_redis_connection().set(key, value)
+    except redis.exceptions.RedisError as e:
+        print(f"Error occurred while setting data: {e}")
 
 
 def increment_value(key):
