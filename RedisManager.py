@@ -56,7 +56,8 @@ init_redis()
 def get_value(key):
     try:
         return get_redis_connection().get(key).decode('utf-8')
-    except Exception:
+    except Exception as e:
+        print(f"Error occurred while retrieving data: {e}")
         return None
 
 
