@@ -23,7 +23,7 @@ async def root():
 @app.get("/mc/user/{uuid}")
 async def getUser(uuid: str):
     try:
-        return get_value("mc.user." + uuid)
+        return get_value("mc:user:" + uuid.replace("-", ""))
     except Exception as e:
         return {"message": "error", "error": str(e)}
 
@@ -31,7 +31,7 @@ async def getUser(uuid: str):
 @app.post("/mc/user/{uuid}")
 async def updateUser(uuid: str, body: dict):
     try:
-        set_value("mc.user." + uuid, body)
+        set_value("mc:user:" + uuid.replace("-", ""), body)
     except Exception as e:
         return {"message": "error", "error": str(e)}
     return {"message": "ok"}
