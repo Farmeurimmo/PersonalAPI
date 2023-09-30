@@ -91,9 +91,14 @@ async def getArticles():
 @app.get("/plugins/{id}")
 async def getPlugin(id: str):
     try:
-        return JSONResponse(content=get_value("plugin." + id))
+        value = get_value("plugin." + id)
+        if value is not None:
+            value_dict = json.loads(value)
+            return JSONResponse(content=value_dict)
+        else:
+            return JSONResponse(content={})
     except Exception as e:
-        return {"message": "error", "error": str(e)}
+        return JSONResponse(status_code=500, content={"message": "error", "error": str(e)})
 
 
 @app.post("/plugins/{id}")
