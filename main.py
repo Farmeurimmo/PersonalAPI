@@ -43,9 +43,13 @@ async def root():
 @app.get("/mc/user/{uuid}")
 async def getUser(uuid: str):
     try:
-        return get_value("mc:user:" + uuid)
+        value = get_value("mc:user:" + uuid)
+        if value is not None:
+            value_dict = json.loads(value)
+            return JSONResponse(content=value_dict)
+        return JSONResponse(status_code=404, content={"message": "user not found"})
     except Exception as e:
-        return {"message": "error", "error": str(e)}
+        return JSONResponse(status_code=500, content={"message": "error", "error": str(e)})
 
 
 @app.post("/mc/user/{uuid}")
@@ -53,22 +57,25 @@ async def updateUser(uuid: str, body: dict):
     try:
         set_value("mc:user:" + uuid, body)
     except Exception as e:
-        return {"message": "error", "error": str(e)}
+        return JSONResponse(status_code=500, content={"message": "error", "error": str(e)})
     return {"message": "ok"}
 
 
 @app.get("/mc/users")
 async def getUsers():
     try:
-        return get_all_data("mc:user:")
+        users = get_all_data("mc:user:")
+        if users is not None:
+            return JSONResponse(content=users)
+        return JSONResponse(status_code=404, content={"message": "no users found"})
     except Exception as e:
-        return {"message": "error", "error": str(e)}
+        return JSONResponse(status_code=500, content={"message": "error", "error": str(e)})
 
 
 @app.get("/portfolio/article/{name}")
 async def getView(name: str):
     value = get_value("article." + name)
-    return value if value is not None else 0
+    return JSONResponse(content=value if value is not None else 0)
 
 
 @app.post("/portfolio/article/{name}")
@@ -76,16 +83,19 @@ async def incrementView(name: str):
     try:
         increment_value("article." + name)
     except Exception as e:
-        return {"message": "error", "error": str(e)}
+        return JSONResponse(status_code=500, content={"message": "error", "error": str(e)})
     return {"message": "ok"}
 
 
 @app.get("/portfolio/articles")
 async def getArticles():
     try:
-        return get_all_data("article.")
+        articles = get_all_data("article.")
+        if articles is not None:
+            return JSONResponse(content=articles)
+        return JSONResponse(status_code=404, content={"message": "no articles found"})
     except Exception as e:
-        return {"message": "error", "error": str(e)}
+        return JSONResponse(status_code=500, content={"message": "error", "error": str(e)})
 
 
 @app.get("/plugins/{id}")
@@ -95,8 +105,7 @@ async def getPlugin(id: str):
         if value is not None:
             value_dict = json.loads(value)
             return JSONResponse(content=value_dict)
-        else:
-            return JSONResponse(content={})
+        return JSONResponse(status_code=404, content={"message": "plugin not found"})
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "error", "error": str(e)})
 
@@ -106,7 +115,7 @@ async def updatePlugin(id: str, body: dict):
     try:
         set_value("plugin." + id, body)
     except Exception as e:
-        return {"message": "error", "error": str(e)}
+        return JSONResponse(status_code=500, content={"message": "error", "error": str(e)})
     return {"message": "ok"}
 
 
