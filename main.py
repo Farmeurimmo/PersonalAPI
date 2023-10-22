@@ -17,6 +17,7 @@ class AuthMiddleware:
 
     async def __call__(self, request: Request, call_next):
         path = request.url.path
+        path = "/" if path == "" else path
         v = get_version_from_path(path)
         if v is None:
             v = get_latest_of(path.split("/")[1])
