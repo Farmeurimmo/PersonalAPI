@@ -17,10 +17,11 @@ class AuthMiddleware:
 
     async def __call__(self, request: Request, call_next):
         path = request.url.path
-        path = "/" if path == "" else path
         v = get_version_from_path(path)
         if v is None:
-            v = get_latest_of(path.split("/")[1])
+            path_version = get_latest_of(path.split("/")[1])
+            path_version = "/" if path_version is None else path_version
+            v = get_latest_of(path_version)
             new_path = "/" + v + path
             return RedirectResponse(url=new_path)
 
