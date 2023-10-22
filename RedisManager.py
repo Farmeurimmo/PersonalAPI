@@ -10,6 +10,8 @@ redis_db = None
 
 
 def connect_to_redis(host, port, password=None, db=0):
+    if host is None:
+        return None
     return redis.Redis(host=host, port=port, password=password, db=db)
 
 
@@ -27,27 +29,19 @@ def get_redis_connection():
     if redis_connection is None:
         init_redis()
     if redis_connection is None:
-        raise Exception("Redis connection is not established")
+        return None
     return redis_connection
 
 
 def update_credentials():
     global redis_host, redis_port, redis_password, redis_db
     redis_host = os.environ.get('REDIS_HOST')
-    if redis_host is None:
-        raise Exception("REDIS_HOST is not defined")
 
     redis_port = os.environ.get('REDIS_PORT')
-    if redis_port is None:
-        raise Exception("REDIS_PORT is not defined")
 
     redis_password = os.environ.get('REDIS_PASSWORD')
-    if redis_password is None:
-        raise Exception("REDIS_PASSWORD is not defined")
 
     redis_db = os.environ.get('REDIS_DB')
-    if redis_db is None:
-        raise Exception("REDIS_DB is not defined")
 
 
 redis_connection = None
