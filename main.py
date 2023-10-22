@@ -55,7 +55,7 @@ while True:
         time.sleep(1)
 
 
-def get_version_from_path(path: str) -> str | None:
+def get_version_from_path(path: str):
     parts = path.split("/")
     if len(parts) >= 2 and parts[1].startswith("v"):
         return parts[1][1:]
