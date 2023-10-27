@@ -6,11 +6,19 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from RedisManager import *
 from Versions import *
 
-app = FastAPI(title="Personal API", version="1.0.0", description="API for my personal projects", contact={
-    "name": "Farmeurimmo",
-    "url": "https://farmeurimmo.fr/contact/",
-    "email": "contact@farmeurimmo.fr",
-}, )
+app = FastAPI(title="Personal API",
+              version="1.0.0",
+              description="API for my personal projects. v stands for version, like v1, v2, etc. If you don't specify a"
+                          " version, the latest one will be used (you will be redirected to it).",
+              contact={
+                  "name": "Farmeurimmo",
+                  "url": "https://farmeurimmo.fr/contact/",
+                  "email": "contact@farmeurimmo.fr",
+              },
+              license_info={
+                  "name": "MIT License",
+                  "url": "https://opensource.org/licenses/MIT",
+              })
 
 auth_key = os.environ.get('AUTH_KEY')
 
