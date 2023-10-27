@@ -37,12 +37,9 @@ class AuthMiddleware:
         if v is None:
             split = path.split("/")[1]
             split = "/" if split == "" else split
-            print("S", split)
             path_version = get_latest_of(split)
             path_version = "/" if path_version == "" else path_version
-            print("PV", path_version)
             new_path = "/" + path_version + path
-            print(new_path)
             return RedirectResponse(url=new_path)
 
         subject = "/"
