@@ -6,7 +6,11 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from RedisManager import *
 from Versions import *
 
-app = FastAPI()
+app = FastAPI(title="Personal API", version="1.0.0", description="API for my personal projects", contact={
+    "name": "Farmeurimmo",
+    "url": "https://farmeurimmo.fr/contact/",
+    "email": "contact@farmeurimmo.fr",
+}, )
 
 auth_key = os.environ.get('AUTH_KEY')
 
@@ -17,6 +21,9 @@ class AuthMiddleware:
 
     async def __call__(self, request: Request, call_next):
         path = request.url.path
+        if path == "/docs" or path == "/redoc" or path == "/openapi.json":
+            response = await call_next(request)
+            return response
         v = get_version_from_path(path)
         if v is None:
             path_version = get_latest_of(path.split("/")[1])
@@ -64,12 +71,12 @@ def get_version_from_path(path: str):
     return None
 
 
-@app.get("/{v}/")
+@app.get("/{v}/", tags=["General"])
 async def root(v: str):
     return {"message": "Connection is healthy", "version": v}
 
 
-@app.get("/{v}/mc/user/{uuid}")
+@app.get("/{v}/mc/user/{uuid}", tags=["Users"])
 async def get_user(v: str, uuid: str):
     try:
         value = get_value("mc:user:" + uuid)
@@ -82,17 +89,17 @@ async def get_user(v: str, uuid: str):
                                                       "version": v})
 
 
-@app.post("/{v}/mc/user/{uuid}")
+@app.post("/{v}/mc/user/{uuid}", tags=["Users"])
 async def update_user(v: str, uuid: str, body: dict):
     try:
         set_value("mc:user:" + uuid, body)
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "uuid": uuid,
                                                       "version": v})
-    return {"message": "ok", "version": v}
+    return JSONResponse(content={"message": "ok", "uuid": uuid, "version": v})
 
 
-@app.get("/{v}/mc/users")
+@app.get("/{v}/mc/users", tags=["Users"])
 async def get_users(v: str):
     try:
         users = get_all_data("mc:user:")
@@ -103,22 +110,22 @@ async def get_users(v: str):
         return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "version": v})
 
 
-@app.get("/{v}/portfolio/article/{name}")
+@app.get("/{v}/portfolio/article/{name}", tags=["Portfolio"])
 async def get_view(name: str):
     value = get_value("article." + name)
     return JSONResponse(content=value if value is not None else 0)
 
 
-@app.post("/{v}/portfolio/article/{name}")
+@app.post("/{v}/portfolio/article/{name}", tags=["Portfolio"])
 async def increment_view(name: str):
     try:
         increment_value("article." + name)
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "error", "error": str(e)})
-    return {"message": "ok"}
+    return JSONResponse(content={"message": "ok"})
 
 
-@app.get("/{v}/portfolio/articles")
+@app.get("/{v}/portfolio/articles", tags=["Portfolio"])
 async def get_articles():
     try:
         articles = get_all_data("article.")
@@ -129,7 +136,7 @@ async def get_articles():
         return JSONResponse(status_code=500, content={"message": "error", "error": str(e)})
 
 
-@app.get("/{v}/plugins/{id}")
+@app.get("/{v}/plugins/{id}", tags=["Minecraft"])
 async def get_plugin(v: str, id: str):
     try:
         value = get_value("plugin." + id)
@@ -141,13 +148,13 @@ async def get_plugin(v: str, id: str):
         return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "id": id, "version": v})
 
 
-@app.post("/{v}/plugins/{id}")
+@app.post("/{v}/plugins/{id}", tags=["Minecraft"])
 async def update_plugin(v: str, id: str, body: dict):
     try:
         set_value("plugin." + id, body)
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "id": id, "version": v})
-    return {"message": "ok"}
+    return JSONResponse(content={"message": "ok", "id": id, "version": v})
 
 
 auth_middleware = AuthMiddleware(auth_key)

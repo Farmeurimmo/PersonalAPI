@@ -10,4 +10,4 @@ If an endpoint is removed (like v1 and you still have v2), the v2 will be used.
 
 ## Docs ?
 
-**In progress**
+The documentation is a little bit unstable and not complete, but you can find it at https://api.farmeurimmo.fr/docs.
