@@ -33,15 +33,11 @@ class AuthMiddleware:
             response = await call_next(request)
             return response
         v = get_version_from_path(path)
+        path = "/" if path is None else path
         if v is None:
             path_version = get_latest_of(path.split("/")[1])
             path_version = "/" if path_version is None else path_version
-            v = get_latest_of(path_version)
-            if v is None:
-                return JSONResponse(status_code=404, content={"message": "version not found"})
-            if path is None:
-                path = "/"
-            new_path = "/" + v + path
+            new_path = "/" + path_version + path
             return RedirectResponse(url=new_path)
 
         subject = "/"
