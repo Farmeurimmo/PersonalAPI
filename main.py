@@ -33,11 +33,16 @@ class AuthMiddleware:
             response = await call_next(request)
             return response
         v = get_version_from_path(path)
-        path = "/" if path is None else path
+        path = "/" if path == "" else path
         if v is None:
-            path_version = get_latest_of(path.split("/")[1])
-            path_version = "/" if path_version is None else path_version
+            split = path.split("/")[1]
+            split = "/" if split == "" else split
+            print("S", split)
+            path_version = get_latest_of(split)
+            path_version = "/" if path_version == "" else path_version
+            print("PV", path_version)
             new_path = "/" + path_version + path
+            print(new_path)
             return RedirectResponse(url=new_path)
 
         subject = "/"
