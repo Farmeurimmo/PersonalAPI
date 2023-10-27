@@ -37,6 +37,10 @@ class AuthMiddleware:
             path_version = get_latest_of(path.split("/")[1])
             path_version = "/" if path_version is None else path_version
             v = get_latest_of(path_version)
+            if v is None:
+                return JSONResponse(status_code=404, content={"message": "version not found"})
+            if path is None:
+                path = "/"
             new_path = "/" + v + path
             return RedirectResponse(url=new_path)
 
@@ -144,7 +148,7 @@ async def get_articles():
         return JSONResponse(status_code=500, content={"message": "error", "error": str(e)})
 
 
-@app.get("/{v}/plugins/{id}", tags=["Minecraft"])
+@app.get("/{v}/plugins/{id}", tags=["Plugins"])
 async def get_plugin(v: str, id: str):
     try:
         value = get_value("plugin." + id)
@@ -156,7 +160,7 @@ async def get_plugin(v: str, id: str):
         return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "id": id, "version": v})
 
 
-@app.post("/{v}/plugins/{id}", tags=["Minecraft"])
+@app.post("/{v}/plugins/{id}", tags=["Plugins"])
 async def update_plugin(v: str, id: str, body: dict):
     try:
         set_value("plugin." + id, body)

@@ -12,7 +12,7 @@ tags_metadata = [
         "description": "Operations with blog articles views.",
     },
     {
-        "name": "Minecraft",
+        "name": "Plugins",
         "description": "Operations for minecraft plugins.",
     }
 ]
