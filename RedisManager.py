@@ -75,7 +75,7 @@ def get_all_data(filter):
         for key in keys:
             if key.decode('utf-8').startswith(filter):
                 new_keys.append(key)
-        data = {}
+        data = []
         for key in new_keys:
             value = get_redis_connection().get(key).decode('utf-8')
             data[key.decode('utf-8')] = value
