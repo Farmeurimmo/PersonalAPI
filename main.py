@@ -114,7 +114,7 @@ async def get_users(v: str):
     try:
         users = get_all_data("mc:user:")
         if users is not None:
-            return JSONResponse(content=users)
+            return JSONResponse(content={"users": users})
         return JSONResponse(status_code=404, content={"message": "no users found", "version": v})
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "version": v})
