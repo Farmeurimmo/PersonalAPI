@@ -78,11 +78,12 @@ def get_all_data(filter):
         data = []
         for key in new_keys:
             value = get_redis_connection().get(key).decode('utf-8')
-            data[key.decode('utf-8')] = value
+            data.append(json.loads(value))
         temp = data.copy()
         for key in temp.keys():
-            data[key.replace(filter, "")] = data.pop(key)
-
+            if key.startswith(filter):
+                data[key[len(filter):]] = data[key]
+                del data[key]
         return data
     except redis.exceptions.RedisError as e:
         print(f"Error occurred while retrieving data: {e}")
