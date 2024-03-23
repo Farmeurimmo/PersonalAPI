@@ -53,14 +53,13 @@ class AuthMiddleware:
             v = get_latest_of(subject)
             new_path = path.replace(path.split("/")[1], v)
             return RedirectResponse(url=new_path)
-  
 
         if request.method != "GET":
             provided_key = request.headers.get("X-API-Key")
 
             if "/portfolio/article/" in path:
-              response = await call_next(request)
-              return response
+                response = await call_next(request)
+                return response
 
             if not provided_key or provided_key != self.api_key:
                 error_message = "Invalid API key"
