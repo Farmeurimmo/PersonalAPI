@@ -1,6 +1,6 @@
 import time
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse, RedirectResponse
 
 from RedisManager import *
@@ -38,7 +38,11 @@ class AuthMiddleware:
             split = path.split("/")[1]
             split = "/" if split == "" else split
             path_version = get_latest_of(split)
-            path_version = "/" if path_version == "" else path_version
+            if path_version is None:
+                return JSONResponse(status_code=404, content={"message": "The requested URL was not found on the "
+                                                                         "server."
+                                                                         "If you entered the URL manually please "
+                                                                         "check your spelling and try again."})
             new_path = "/" + path_version + path
             return RedirectResponse(url=new_path)
 
@@ -51,6 +55,11 @@ class AuthMiddleware:
         subject = "/" if subject == "" else subject
         if not version_exists(subject, v):
             v = get_latest_of(subject)
+            if v == None:
+                return JSONResponse(status_code=404,
+                                    content={"message": "The requested URL was not found on the server. "
+                                                        "If you entered the URL manually please check your "
+                                                        "spelling and try again."})
             new_path = path.replace(path.split("/")[1], v)
             return RedirectResponse(url=new_path)
 
@@ -83,6 +92,20 @@ def get_version_from_path(path: str):
     if len(parts) >= 2 and parts[1].startswith("v"):
         return parts[1][1:]
     return None
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request, exc):
+    if exc.status_code == 404:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "The requested URL was not found on the server. If you entered the URL manually "
+                                "please check your spelling and try again."},
+        )
+    return JSONResponse(
+        status_code=500,
+        content={"message": "An unexpected error has occurred."},
+    )
 
 
 @app.get("/{v}/", tags=["General"])
