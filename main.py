@@ -201,10 +201,10 @@ async def create_post(v: str, post_id: str, body: dict):
 async def get_post(v: str, post_id: str):
     try:
         value = get_value("blog." + post_id)
-        views = get_value("blog." + post_id + ".views")
         if value is not None:
             value_dict = json.loads(value)
-            value_dict["views"] = int(views) if views is not None else 0
+            value_dict["views"] = int(value_dict.get("views", 0)) + 1
+            set_value("blog." + post_id, value_dict)
             return JSONResponse(content=value_dict)
         return JSONResponse(status_code=404, content={"message": "post not found", "id": post_id, "version": v})
     except Exception as e:
@@ -227,15 +227,6 @@ async def get_posts(v: str):
         return JSONResponse(status_code=404, content={"message": "no posts found", "version": v})
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "version": v})
-
-
-@app.post("/{v}/blog/{post_id}/view", tags=["Blog"])
-async def increment_post_view(v: str, post_id: str):
-    try:
-        increment_value("blog." + post_id + ".views")
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "id": post_id, "version": v})
-    return JSONResponse(content={"message": "ok", "id": post_id, "version": v})
 
 
 auth_middleware = AuthMiddleware(auth_key)
