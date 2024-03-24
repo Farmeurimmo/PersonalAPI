@@ -9,10 +9,14 @@ tags_metadata = [
     },
     {
         "name": "Portfolio",
-        "description": "Operations with blog articles views.",
+        "description": "Operations with **OLD** blog articles views.",
     },
     {
         "name": "Plugins",
         "description": "Operations for minecraft plugins.",
-    }
+    },
+    {
+        "name": "Blog",
+        "description": "Operations with **NEW** blog posts.",
+    },
 ]

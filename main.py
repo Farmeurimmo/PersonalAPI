@@ -3,8 +3,8 @@ import time
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse, RedirectResponse
 
-from RedisManager import *
-from Versions import *
+from redis_manager import *
+from versions import *
 
 app = FastAPI(title="Personal API",
               version="1.0.0",
@@ -96,15 +96,9 @@ def get_version_from_path(path: str):
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc):
-    if exc.status_code == 404:
-        return JSONResponse(
-            status_code=404,
-            content={"message": "The requested URL was not found on the server. If you entered the URL manually "
-                                "please check your spelling and try again."},
-        )
     return JSONResponse(
-        status_code=500,
-        content={"message": "An unexpected error has occurred."},
+        status_code=exc.status_code,
+        content={"message": exc.detail, "status_code": exc.status_code, "request": request.url.path}
     )
 
 
@@ -192,6 +186,38 @@ async def update_plugin(v: str, id: str, body: dict):
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "id": id, "version": v})
     return JSONResponse(content={"message": "ok", "id": id, "version": v})
+
+
+@app.post("/{v}/blog/{post_id}", tags=["Blog"])
+async def create_post(v: str, post_id: str, body: dict):
+    try:
+        set_value("blog." + post_id, body)
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "id": post_id, "version": v})
+    return JSONResponse(content={"message": "ok", "id": post_id, "version": v})
+
+
+@app.get("/{v}/blog/{post_id}", tags=["Blog"])
+async def get_post(v: str, post_id: str):
+    try:
+        value = get_value("blog." + post_id)
+        if value is not None:
+            value_dict = json.loads(value)
+            return JSONResponse(content=value_dict)
+        return JSONResponse(status_code=404, content={"message": "post not found", "id": post_id, "version": v})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "id": post_id, "version": v})
+
+
+@app.get("/{v}/blog", tags=["Blog"])
+async def get_posts(v: str):
+    try:
+        posts = get_all_data("blog.")
+        if posts is not None:
+            return JSONResponse(content=posts)
+        return JSONResponse(status_code=404, content={"message": "no posts found", "version": v})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "version": v})
 
 
 auth_middleware = AuthMiddleware(auth_key)

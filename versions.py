@@ -4,6 +4,7 @@ version = {
         "portfolio",
         "plugins",
         "/",
+        "blog",
     ],
 }
 
