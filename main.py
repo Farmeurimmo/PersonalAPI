@@ -216,6 +216,7 @@ async def get_posts(v: str):
     try:
         posts = get_all_data("blog.")
         if posts is not None:
+            posts = json.loads(posts)
             for post in posts:
                 post.pop("content", None)
                 views = get_value("blog." + post["id"] + ".views")
