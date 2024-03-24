@@ -36,12 +36,18 @@ def get_redis_connection():
 def update_credentials():
     global redis_host, redis_port, redis_password, redis_db
     redis_host = os.environ.get('REDIS_HOST')
+    if redis_host is None:
+        redis_host = "localhost"
 
     redis_port = os.environ.get('REDIS_PORT')
+    if redis_port is None:
+        redis_port = 6379
 
     redis_password = os.environ.get('REDIS_PASSWORD')
 
     redis_db = os.environ.get('REDIS_DB')
+    if redis_db is None:
+        redis_db = 0
 
 
 redis_connection = None
