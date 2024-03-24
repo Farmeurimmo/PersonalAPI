@@ -220,8 +220,8 @@ async def get_posts(v: str):
             for post_id, post in posts_copy.items():
                 post_dict = json.loads(post)
                 post_dict.pop("content", None)
-                views = get_value("blog." + post_id + ".views")
-                post_dict["views"] = int(views) if views is not None else 0
+                if "views" not in post_dict:
+                    post_dict["views"] = 0
                 posts[post_id] = post_dict
             return JSONResponse(content=posts)
         return JSONResponse(status_code=404, content={"message": "no posts found", "version": v})
