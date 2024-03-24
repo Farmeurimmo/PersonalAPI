@@ -63,7 +63,6 @@ def get_value(key):
 
 
 def set_value(key, value):
-    print(f"Setting {key} to {value}")
     try:
         get_redis_connection().set(key, json.dumps(value))
     except Exception as e:
