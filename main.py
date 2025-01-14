@@ -12,7 +12,7 @@ app = FastAPI(title="Personal API",
                           " version, the latest one will be used (you will be redirected to it).",
               contact={
                   "name": "Farmeurimmo",
-                  "url": "https://farmeurimmo.fr/contact/",
+                  "url": "https://farmeurimmo.fr/#contact/",
                   "email": "contact@farmeurimmo.fr",
               },
               license_info={
@@ -55,7 +55,7 @@ class AuthMiddleware:
         subject = "/" if subject == "" else subject
         if not version_exists(subject, v):
             v = get_latest_of(subject)
-            if v == None:
+            if v is None:
                 return JSONResponse(status_code=404,
                                     content={"message": "The requested URL was not found on the server. "
                                                         "If you entered the URL manually please check your "
