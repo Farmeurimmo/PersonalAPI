@@ -6,6 +6,9 @@ version = {
         "/",
         "blog",
     ],
+    "v2": [
+        "blog",
+    ]
 }
 
 
