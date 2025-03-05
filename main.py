@@ -226,7 +226,7 @@ async def get_post(v: str, post_id: str):
 @app.get("/{v}/blog", tags=["Blog"])
 async def get_posts(v: str):
     try:
-        if v == 1:
+        if v == "v1":
             posts = get_all_data("blog.")
             if posts is not None:
                 posts_copy = posts.copy()
@@ -237,7 +237,7 @@ async def get_posts(v: str):
                         post_dict["views"] = 0
                     posts[post_id] = post_dict
                 return JSONResponse(content=posts)
-        elif v == 2:
+        elif v == "v2":
             posts = get_all_data("blog.")
             if posts is not None:
                 result = {}
