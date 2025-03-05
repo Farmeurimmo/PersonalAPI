@@ -226,16 +226,25 @@ async def get_post(v: str, post_id: str):
 @app.get("/{v}/blog", tags=["Blog"])
 async def get_posts(v: str):
     try:
-        posts = get_all_data("blog.")
-        if posts is not None:
-            posts_copy = posts.copy()
-            for post_id, post in posts_copy.items():
-                post_dict = json.loads(post)
-                post_dict.pop("content", None)
-                if "views" not in post_dict:
-                    post_dict["views"] = 0
-                posts[post_id] = post_dict
-            return JSONResponse(content=posts)
+        if v == 1:
+            posts = get_all_data("blog.")
+            if posts is not None:
+                posts_copy = posts.copy()
+                for post_id, post in posts_copy.items():
+                    post_dict = json.loads(post)
+                    post_dict.pop("content", None)
+                    if "views" not in post_dict:
+                        post_dict["views"] = 0
+                    posts[post_id] = post_dict
+                return JSONResponse(content=posts)
+        elif v == 2:
+            posts = get_all_data("blog.")
+            if posts is not None:
+                result = {}
+                for post_id, post in posts.items():
+                    post_dict = json.loads(post)
+                    result[post_id] = {"views": post_dict.get("views", 0)}
+                return JSONResponse(content=result)
         return JSONResponse(status_code=404, content={"message": "no posts found", "version": v})
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "version": v})
