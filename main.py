@@ -189,28 +189,7 @@ async def update_plugin(v: str, id: str, body: dict):
 
 
 @app.post("/{v}/blog/{post_id}", tags=["Blog"])
-async def create_post(v: str, post_id: str, body: dict):
-    try:
-        set_value("blog." + post_id, body)
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "id": post_id, "version": v})
-    return JSONResponse(content={"message": "ok", "id": post_id, "version": v})
-
-
-@app.put("/{v}/blog/{post_id}", tags=["Blog"])
-async def update_post(v: str, post_id: str, body: dict):
-    try:
-        value = get_value("blog." + post_id)
-        if value is not None:
-            set_value("blog." + post_id, body)
-            return JSONResponse(content={"message": "ok", "id": post_id, "version": v})
-        return JSONResponse(status_code=404, content={"message": "post not found", "id": post_id, "version": v})
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"message": "error", "error": str(e), "id": post_id, "version": v})
-
-
-@app.get("/{v}/blog/{post_id}", tags=["Blog"])
-async def get_post(v: str, post_id: str):
+async def get_and_increment(v: str, post_id: str):
     try:
         value = get_value("blog." + post_id)
         if value is not None:
